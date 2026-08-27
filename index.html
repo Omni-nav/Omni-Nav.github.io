@@ -9,20 +9,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>OmniNav</title>
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-
-    gtag('config', 'G-PYVRSFMDRL');
-  </script>
-
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
         rel="stylesheet">
 
@@ -185,35 +171,8 @@
     }
     
     </style>
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
 </head>
 <body>
-
-<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link">
-          More Research
-        </a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="https://OpenObj.github.io">
-            OpenObj
-          </a>
-        </div>
-      </div>
-    </div> -->
-
-<!--   </div>
-</nav> -->
   
 <section class="hero">
   <div class="hero-body">
@@ -226,7 +185,7 @@
               <div class="authors-section">
         <!-- 作者列表 -->
                 <div class = "authors-line"> 
-                    <div class="author-name">Anonymous submission<span class="super">1*</span></div>
+                    <span class="author-block">Anonymous Authors</span>
                   </div>
               </div>
             </div>
@@ -270,7 +229,6 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
-          <p style="text-indent: 2em;">
             Long-horizon target navigation requires a robot to sustain task execution across evolving observations, decisions, and physical interactions.
 This requires three coupled capabilities: maintaining valid scene memory, revising target beliefs under partial observability, and selecting interaction-feasible navigation endpoints. 
 However, the state underlying each capability is only conditionally valid: scene representations become stale when objects move or disappear, unsuccessful searches alter beliefs over target locations,
@@ -287,7 +245,7 @@ execution feedback through hierarchical closed-loop recovery. Extensive experime
 success rates among the compared methods on semantic ObjectNav and
 fine-grained instance navigation benchmarks,
 remains robust to target relocation, and improves real-world pick-and-place
-success from 53.3\% to 71.7\% over an adapted open-loop baseline.
+success from 53.3% to 71.7% over an adapted open-loop baseline.
           </p>
         </div>
       </div>
@@ -305,9 +263,8 @@ success from 53.3\% to 71.7\% over an adapted open-loop baseline.
       </style>
       <h2 class="title is-3">Framework</h2>
       <div class="content has-text-justified">
-        <p style="text-indent: 2em;">
           Overall framework of OmniNav. The system consists of three main modules: (i) a dynamic object-centric scene memory that maintains instance-level semantics, geometry, relations, 
-          and per-instance persistence beliefs; (ii) a task-grounded exploration--exploitation navigation strategy 
+          and per-instance persistence beliefs; (ii) a task-grounded exploration-exploitation navigation strategy 
           that balances semantic target reasoning with exploration progress evidence; and (iii) a reachability-aware closed-loop mobile manipulation module that selects interaction-feasible base poses and recovers from execution failures or scene changes.
         </p>
       </div>
@@ -351,19 +308,7 @@ success from 53.3\% to 71.7\% over an adapted open-loop baseline.
             <h1 class="scene-title">Scene 2</h1>
             <div class="scene-stats">Other 13 instructions</div>
           </div>
-          <div class="scene-content">
-            <div class="scene-item">I'm hungry</div>
-            <div class="scene-item">plant</div>
-            <div class="scene-item">I need to sleep</div>
-            <div class="scene-item">white fan</div>
-            <div class="scene-item">white clock on the cabinet</div>
-            <div class="scene-item">I need to use the toilet</div>
-            <div class="scene-item">plant on the table</div>
-            <div class="scene-item">I want to play games</div>
-            <div class="scene-item">I need fruit</div>
-            <div class="scene-item">white clock</div>
-            <div class="scene-item">I need a drink</div>
-            <div class="scene-item">red clock on table</div>
+          <div class="scene-content"> 
             <div class="scene-item">apple</div>
           </div>  
           <h2 class="subtitle has-text-centered">
@@ -377,17 +322,7 @@ success from 53.3\% to 71.7\% over an adapted open-loop baseline.
             <div class="scene-stats">Other 11 instuctions</div>
         </div>
         <div class="scene-content">
-            <div class="scene-item">vase</div>
-            <div class="scene-item">black mug on chair</div>
-            <div class="scene-item">I'd like to see some green</div>
-            <div class="scene-item">blue tub on a toilet</div>
-            <div class="scene-item">toycar on chair</div>
-            <div class="scene-item">I need to drink water</div>
-            <div class="scene-item">toybear</div>
-            <div class="scene-item">black bottle</div>
-            <div class="scene-item">I'd like to go to toilet</div>
-            <div class="scene-item">I'd like to eat something</div>
-            <div class="scene-item">I'd like to play with a toy</div>
+            <div class="scene-item">vase</div> 
         </div>
     </div>
           <h2 class="subtitle has-text-centered">
@@ -399,17 +334,7 @@ success from 53.3\% to 71.7\% over an adapted open-loop baseline.
             <div class="scene-stats">Other 11 instructions</div>
         </div>
         <div class="scene-content">
-            <div class="scene-item">White remote control on sofa</div>
-            <div class="scene-item">towel on toilet</div>
-            <div class="scene-item">Yellow gift box</div>
-            <div class="scene-item">Book on chair</div>
-            <div class="scene-item">white umbrella on table</div>
-            <div class="scene-item">TV（television）</div>
-            <div class="scene-item">I'd like to go to toilet</div>
-            <div class="scene-item">I want to sleep</div>
-            <div class="scene-item">I want to wash my hands</div>
-            <div class="scene-item">bed</div>
-            <div class="scene-item">mirror</div>
+            <div class="scene-item">White remote control on sofa</div> 
         </div>
     </div>
           <h2 class="subtitle has-text-centered">
@@ -422,18 +347,7 @@ success from 53.3\% to 71.7\% over an adapted open-loop baseline.
             <div class="scene-stats">Other 12 instructions</div>
         </div>
         <div class="scene-content">
-            <div class="scene-item">coat hanger</div>
-            <div class="scene-item">gun on cabinet</div>
-            <div class="scene-item">blue box on table</div>
-            <div class="scene-item">blue box</div>
-            <div class="scene-item">plant</div>
-            <div class="scene-item">socket on bed</div>
-            <div class="scene-item">power strip</div>
-            <div class="scene-item">white mug on cabinet</div>
-            <div class="scene-item">gray mug</div>
-            <div class="scene-item">I feel sleepy</div>
-            <div class="scene-item">I am thirsty</div>
-            <div class="scene-item">I want to brush my tooth</div>
+            <div class="scene-item">coat hanger</div> 
         </div>
     </div>
           <h2 class="subtitle has-text-centered">

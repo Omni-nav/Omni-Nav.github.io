@@ -5,24 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments.">
   <meta name="keywords" content="long-horizon navigation, object navigation, dynamic scene memory, mobile manipulation, target belief revision">
-  <meta name="theme-color" content="#0b2530">
+  <meta name="theme-color" content="#ffffff">
   <title>OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b2530'/%3E%3Cpath d='M14 37c12-22 24-22 36 0' fill='none' stroke='%235fe0bd' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='24' r='6' fill='%23fff'/%3E%3C/svg%3E">
   <style>
     :root {
       --ink: #12262d;
       --muted: #60747c;
-      --paper: #f5f7f3;
+      --paper: #ffffff;
       --surface: #ffffff;
       --navy: #0b2530;
       --navy-soft: #123b48;
-      --mint: #5fe0bd;
-      --mint-dark: #147b68;
+      --mint: #dff2ec;
+      --mint-dark: #24695e;
       --amber: #f1b95b;
       --line: #dce5e2;
-      --shadow: 0 18px 55px rgba(11, 37, 48, .09);
-      --radius: 20px;
+      --shadow: 0 10px 30px rgba(18, 38, 45, .07);
+      --radius: 14px;
       --content: 1120px;
+      --video-gap: 40px;
     }
 
     * { box-sizing: border-box; }
@@ -30,7 +31,7 @@
     body {
       margin: 0;
       color: var(--ink);
-      background: var(--paper);
+      background: #fff;
       font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
       line-height: 1.68;
       -webkit-font-smoothing: antialiased;
@@ -50,21 +51,15 @@
     .site-nav {
       position: sticky; top: 0; z-index: 30;
       border-bottom: 1px solid rgba(220, 229, 226, .8);
-      background: rgba(245, 247, 243, .88);
+      background: rgba(255, 255, 255, .92);
       backdrop-filter: blur(16px);
     }
     .nav-inner {
       width: min(var(--content), calc(100% - 32px)); margin: 0 auto;
       height: 64px; display: flex; align-items: center; gap: 24px;
     }
-    .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; }
-    .brand-mark {
-      width: 30px; height: 30px; border-radius: 9px; position: relative; background: var(--navy);
-    }
-    .brand-mark::before {
-      content: ""; position: absolute; inset: 8px 6px 6px;
-      border: 3px solid var(--mint); border-bottom: 0; border-radius: 50% 50% 0 0;
-    }
+    .brand { display: inline-flex; align-items: center; text-decoration: none; font-weight: 800; letter-spacing: -.02em; }
+    .brand-mark { display: none; }
     .nav-links {
       margin-left: auto; display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none;
     }
@@ -75,30 +70,13 @@
     }
     .nav-links a:hover { color: var(--ink); background: #fff; }
 
-    .hero {
-      position: relative; overflow: hidden; color: #fff;
-      background:
-        radial-gradient(circle at 79% 22%, rgba(95, 224, 189, .22), transparent 24%),
-        radial-gradient(circle at 16% 88%, rgba(241, 185, 91, .13), transparent 25%),
-        linear-gradient(135deg, #071c25 0%, #0b2b36 58%, #164755 100%);
-    }
-    .hero::after {
-      content: ""; position: absolute; inset: 0; opacity: .15; pointer-events: none;
-      background-image: linear-gradient(rgba(255,255,255,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.13) 1px, transparent 1px);
-      background-size: 48px 48px;
-      mask-image: linear-gradient(to bottom, #000, transparent 88%);
-    }
+    .hero { position: relative; color: var(--ink); background: #fff; border-bottom: 1px solid var(--line); }
     .hero-inner {
-      position: relative; z-index: 1; width: min(940px, calc(100% - 40px)); margin: 0 auto;
-      padding: 96px 0 84px; text-align: center;
-    }
-    .eyebrow {
-      margin: 0 0 18px; color: var(--mint); font-size: .78rem; font-weight: 800;
-      letter-spacing: .18em; text-transform: uppercase;
+      width: min(940px, calc(100% - 40px)); margin: 0 auto;
+      padding: 82px 0 70px; text-align: center;
     }
     h1 { margin: 0; font-size: clamp(2.35rem, 6vw, 5.2rem); line-height: 1.03; letter-spacing: -.055em; }
-    .hero-subtitle { max-width: 760px; margin: 24px auto 0; color: #d8e8e9; font-size: clamp(1rem, 2.1vw, 1.25rem); }
-    .authors { margin: 23px 0 0; color: #b8cbcf; font-weight: 600; }
+    .hero-subtitle { max-width: 760px; margin: 20px auto 0; color: var(--muted); font-size: clamp(1rem, 2.1vw, 1.25rem); }
     .hero-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
     .button {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -106,17 +84,18 @@
       text-decoration: none; font-weight: 750; cursor: pointer; transition: transform .2s ease, background .2s ease, border-color .2s ease;
     }
     .button:hover { transform: translateY(-1px); }
-    .button-primary { color: var(--navy); background: var(--mint); }
-    .button-ghost { color: #fff; border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.07); }
+    .button-primary { color: #fff; background: var(--ink); }
+    .button-ghost { color: var(--ink); border-color: var(--line); background: #fff; }
     .button[aria-disabled="true"] { opacity: .75; }
     .button-icon { font-size: 1.05em; }
 
     main { overflow: clip; }
     .section { padding: 92px 0; }
-    .section:nth-of-type(even) { background: var(--surface); }
+    .section:nth-of-type(even) { background: #fafbfa; }
     .container { width: min(var(--content), calc(100% - 40px)); margin: 0 auto; }
     .narrow { width: min(800px, 100%); margin-inline: auto; }
     .section-head { display: grid; grid-template-columns: minmax(0, .75fr) minmax(280px, 1fr); gap: 44px; align-items: end; margin-bottom: 34px; }
+    .section-head.single { grid-template-columns: 1fr; }
     .section-kicker { margin: 0 0 8px; color: var(--mint-dark); font-size: .76rem; font-weight: 850; letter-spacing: .15em; text-transform: uppercase; }
     h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.08; letter-spacing: -.04em; }
     h3 { margin: 0; font-size: clamp(1.25rem, 2.4vw, 1.75rem); line-height: 1.2; letter-spacing: -.02em; }
@@ -166,8 +145,11 @@
     .block-head { display: flex; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 22px; }
     .block-head p { max-width: 650px; margin: 7px 0 0; color: var(--muted); }
     .tag { display: inline-flex; padding: 5px 9px; border: 1px solid #cddbd7; border-radius: 999px; color: var(--mint-dark); background: #eef8f4; font-size: .72rem; font-weight: 800; white-space: nowrap; }
-    .video-grid, .image-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-    .video-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .video-grid, .image-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 500px));
+      justify-content: center; gap: var(--video-gap);
+    }
+    .video-grid.single { grid-template-columns: minmax(0, 500px); justify-content: center; }
     .media-card { min-width: 0; }
     .media-card h4 { margin: 13px 2px 4px; }
     .media-card .card-caption { margin: 0 2px; }
@@ -188,16 +170,27 @@
     .strip-control { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; color: var(--ink); background: #fff; cursor: pointer; }
     .strip-control:hover { border-color: var(--mint-dark); }
 
+    .video-carousel { position: relative; width: min(1040px, 100%); margin-inline: auto; }
+    .carousel-controls { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 12px; }
+    .carousel-status { margin-right: 6px; color: var(--muted); font-size: .8rem; }
+    .carousel-control {
+      width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%;
+      color: var(--ink); background: #fff; cursor: pointer;
+    }
+    .carousel-control:hover { border-color: #8fa29e; background: #f7f9f8; }
+    .carousel-track {
+      display: flex; gap: var(--video-gap); overflow-x: hidden; scroll-snap-type: x mandatory;
+      scroll-behavior: smooth; overscroll-behavior-inline: contain;
+    }
+    .carousel-track .media-card { flex: 0 0 calc((100% - var(--video-gap)) / 2); scroll-snap-align: start; }
+
     .comparison-card { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(0, 1.4fr); gap: 28px; align-items: center; }
     .comparison-copy { padding: 18px 0; }
     .comparison-copy p { color: var(--muted); }
     .comparison-copy ul { padding-left: 1.2rem; color: #30464e; }
     .comparison-copy li + li { margin-top: 8px; }
 
-    .citation-box { position: relative; padding: 24px; border-radius: 18px; color: #dce9e7; background: var(--navy); overflow-x: auto; }
-    .citation-box pre { margin: 0; font: .86rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; }
-    .copy-button { position: absolute; right: 14px; top: 14px; min-height: 36px; padding: 7px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; color: #fff; background: rgba(255,255,255,.08); cursor: pointer; }
-    footer { padding: 38px 20px; color: #9bb0b5; background: #071c25; text-align: center; font-size: .85rem; }
+    footer { padding: 34px 20px; color: var(--muted); background: #fff; border-top: 1px solid var(--line); text-align: center; font-size: .85rem; }
     footer p { margin: 4px 0; }
 
     .reveal { opacity: 0; transform: translateY(28px); transition: opacity .72s ease, transform .72s cubic-bezier(.2,.75,.25,1); }
@@ -206,8 +199,6 @@
     @media (max-width: 880px) {
       .section-head, .comparison-card { grid-template-columns: 1fr; gap: 18px; }
       .stat-grid, .stage-grid { grid-template-columns: repeat(2, 1fr); }
-      .video-grid.three { grid-template-columns: 1fr 1fr; }
-      .video-grid.three .media-card:last-child { grid-column: 1 / -1; width: calc(50% - 9px); }
       .nav-links a:nth-child(n+5) { display: none; }
     }
     @media (max-width: 620px) {
@@ -218,8 +209,8 @@
       .brand-mark { display: none; }
       .nav-links { gap: 0; }
       .nav-links a { padding-inline: 8px; font-size: .79rem; }
-      .video-grid, .image-grid, .video-grid.three, .stat-grid, .stage-grid { grid-template-columns: 1fr; }
-      .video-grid.three .media-card:last-child { grid-column: auto; width: auto; }
+      .video-grid, .image-grid, .stat-grid, .stage-grid { grid-template-columns: 1fr; }
+      .carousel-track .media-card { flex-basis: 100%; }
       .block-head { align-items: flex-start; flex-direction: column; }
       .media-shell { min-height: 190px; }
       .prose { text-align: left; }
@@ -243,7 +234,6 @@
         <a href="#simulation">Simulation</a>
         <a href="#real-world">Real World</a>
         <a href="#comparison">Comparison</a>
-        <a href="#citation">Citation</a>
       </div>
     </div>
   </nav>
@@ -252,20 +242,21 @@
     <div class="hero-inner">
       <h1>OmniNav</h1>
       <p class="hero-subtitle">Robust Long-Horizon Target Navigation in Dynamic Environments</p>
+      <!-- Project resource buttons: uncomment this block when the links are ready.
       <div class="hero-actions" aria-label="Project resources">
         <a class="button button-primary resource-placeholder" href="#" aria-disabled="true"><span class="button-icon" aria-hidden="true">↗</span>Paper · Coming soon</a>
         <a class="button button-ghost resource-placeholder" href="#" aria-disabled="true"><span class="button-icon" aria-hidden="true">⌘</span>Code · Coming soon</a>
         <a class="button button-ghost" href="#simulation"><span class="button-icon" aria-hidden="true">▶</span>Experiments</a>
       </div>
+      -->
     </div>
   </header>
 
   <main id="main">
     <section class="section reveal" aria-labelledby="poster-title">
       <div class="container">
-        <div class="section-head">
-          <div><p class="section-kicker">Project overview</p><h2 id="poster-title">At a glance</h2></div>
-          <p class="section-intro">A compact overview of OmniNav’s scene-memory, target-reasoning, navigation, and interaction loop.</p>
+        <div class="section-head single">
+          <div><h2 id="poster-title">Poster</h2></div>
         </div>
         <figure>
           <div class="media-shell ratio-figure">
@@ -292,9 +283,9 @@
           <div><p class="section-kicker">Method</p><h2 id="framework-title">Framework</h2></div>
           <p class="section-intro">Continual inference connects scene validity, target belief, and interaction feasibility across a long-horizon task.</p>
         </div>
-        <p class="framework-copy">Overall framework of OmniNav. The system consists of three main modules: 
-          (i) a dynamic object-centric scene memory that maintains instance-level semantics, geometry, relations, posterior persistence beliefs, and an auxiliary 2D exploration-progress ma; 
-          (ii) a task-grounded exploration–exploitation navigation strategy that balances semantic target reasoning with exploration progress evidence; 
+        <p class="framework-copy">Overall framework of OmniNav. The system consists of three main modules:
+          (i) a dynamic object-centric scene memory that maintains instance-level semantics, geometry, relations, posterior persistence beliefs, and an auxiliary 2D exploration-progress map;
+          (ii) a task-grounded exploration–exploitation navigation strategy that balances semantic target reasoning with exploration progress evidence;
           and (iii) a reachability-aware closed-loop mobile manipulation module that selects interaction-feasible base poses and recovers from execution failures or scene changes.</p>
         <figure>
           <div class="media-shell ratio-figure">
@@ -361,17 +352,11 @@
         </div>
 
         <div class="experiment-block">
-          <div class="block-head"><div><h3>Fine-grained instance matching</h3><p>Use a large primary result image for the core comparison, with optional cases available in a compact horizontal gallery.</p></div><span class="tag">Image results</span></div>
+          <div class="block-head"><div><h3>Fine-grained instance matching</h3><p>A single overview figure presents the query, candidate observations, and selected target instance.</p></div><span class="tag">1 figure</span></div>
           <article class="media-card">
             <div class="media-shell ratio-figure"><img class="lazy-image" data-src="./static/images/fine-grained-matching-main.png" alt="Fine-grained instance matching overview" loading="lazy" decoding="async"><div class="placeholder-overlay"><span class="placeholder-glyph">▦</span><strong>Main fine-grained matching figure</strong><code>./static/images/fine-grained-matching-main.png</code></div></div>
             <h4>Query-to-instance correspondence</h4><p class="card-caption">Recommended layout: query crop → candidate observations → selected instance, with confidence or similarity cues.</p>
           </article>
-          <div class="more-row"><button class="button more-button" type="button" aria-expanded="false" aria-controls="matching-more">More matching cases <span aria-hidden="true">＋</span></button><span class="more-hint">Expands into a horizontally scrollable gallery</span></div>
-          <div class="more-panel" id="matching-more"><div class="more-panel-inner"><div class="strip-wrap"><div class="strip-controls"><button class="strip-control" type="button" data-direction="-1" aria-label="Scroll matching cases left">←</button><button class="strip-control" type="button" data-direction="1" aria-label="Scroll matching cases right">→</button></div><div class="horizontal-strip">
-            <article class="media-card"><div class="media-shell ratio-wide"><img class="lazy-image deferred-media" data-src="./static/images/fine-grained-matching-02.png" alt="Fine-grained matching case 2" loading="lazy"><div class="placeholder-overlay"><strong>Matching case 02</strong><code>./static/images/fine-grained-matching-02.png</code></div></div></article>
-            <article class="media-card"><div class="media-shell ratio-wide"><img class="lazy-image deferred-media" data-src="./static/images/fine-grained-matching-03.png" alt="Fine-grained matching case 3" loading="lazy"><div class="placeholder-overlay"><strong>Matching case 03</strong><code>./static/images/fine-grained-matching-03.png</code></div></div></article>
-            <article class="media-card"><div class="media-shell ratio-wide"><img class="lazy-image deferred-media" data-src="./static/images/fine-grained-matching-04.png" alt="Fine-grained matching case 4" loading="lazy"><div class="placeholder-overlay"><strong>Matching case 04</strong><code>./static/images/fine-grained-matching-04.png</code></div></div></article>
-          </div></div></div></div>
         </div>
       </div>
     </section>
@@ -380,15 +365,18 @@
       <div class="container">
         <div class="section-head">
           <div><p class="section-kicker">Real world</p><h2 id="real-title">Long-horizon deployment</h2></div>
-          <p class="section-intro">Main videos remain visible in the reading flow. Extra cases stay collapsed until requested, keeping the page fast and focused.</p>
+          <p class="section-intro">Representative cases stay in the main reading flow. Video groups with more than two cases use compact left–right navigation.</p>
         </div>
 
         <div class="experiment-block">
           <div class="block-head"><div><h3>Long-sequence navigation</h3><p>Three representative real-world sequences. Keep captions task-specific: target, scene change, recovery behavior, and outcome.</p></div><span class="tag">3 featured videos</span></div>
-          <div class="video-grid three">
+          <div class="video-carousel" data-carousel>
+            <div class="carousel-controls"><span class="carousel-status">1–2 / 3</span><button class="carousel-control" type="button" data-direction="-1" aria-label="Show previous long-sequence videos">←</button><button class="carousel-control" type="button" data-direction="1" aria-label="Show next long-sequence videos">→</button></div>
+            <div class="carousel-track">
             <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-long-horizon-01.jpg" aria-label="Real-world long sequence navigation case 1"><source data-src="./static/videos/real-long-horizon-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Long sequence · 01</strong><code>./static/videos/real-long-horizon-01.mp4</code></div></div><h4>Sequence 01</h4><p class="card-caption">Add target, route length / duration, and result.</p></article>
             <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-long-horizon-02.jpg" aria-label="Real-world long sequence navigation case 2"><source data-src="./static/videos/real-long-horizon-02.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Long sequence · 02</strong><code>./static/videos/real-long-horizon-02.mp4</code></div></div><h4>Sequence 02</h4><p class="card-caption">Add the main decision or recovery event.</p></article>
             <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-long-horizon-03.jpg" aria-label="Real-world long sequence navigation case 3"><source data-src="./static/videos/real-long-horizon-03.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Long sequence · 03</strong><code>./static/videos/real-long-horizon-03.mp4</code></div></div><h4>Sequence 03</h4><p class="card-caption">Add the key environmental change and outcome.</p></article>
+            </div>
           </div>
         </div>
 
@@ -401,33 +389,33 @@
         </div>
 
         <div class="experiment-block">
-          <div class="block-head"><div><h3>Target relocation</h3><p>The target is moved after it has been observed. Two primary cases are shown in the article; two further cases are available on demand.</p></div><span class="tag">4 videos · 2 + 2</span></div>
-          <div class="video-grid">
+          <div class="block-head"><div><h3>Target relocation</h3><p>The target is moved after it has been observed. Use the arrows to switch between the four cases, with no more than two videos shown at once.</p></div><span class="tag">4 videos</span></div>
+          <div class="video-carousel" data-carousel>
+            <div class="carousel-controls"><span class="carousel-status">1–2 / 4</span><button class="carousel-control" type="button" data-direction="-1" aria-label="Show previous relocation videos">←</button><button class="carousel-control" type="button" data-direction="1" aria-label="Show next relocation videos">→</button></div>
+            <div class="carousel-track">
             <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-01.jpg" aria-label="Mobile manipulation target relocation case 1"><source data-src="./static/videos/real-mm-relocation-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 01</strong><code>./static/videos/real-mm-relocation-01.mp4</code></div></div><h4>Featured relocation case 01</h4><p class="card-caption">Describe how stale evidence is rejected and the target is reacquired.</p></article>
             <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-02.jpg" aria-label="Mobile manipulation target relocation case 2"><source data-src="./static/videos/real-mm-relocation-02.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 02</strong><code>./static/videos/real-mm-relocation-02.mp4</code></div></div><h4>Featured relocation case 02</h4><p class="card-caption">Describe belief revision and closed-loop recovery.</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-03.jpg" aria-label="Mobile manipulation target relocation case 3"><source data-src="./static/videos/real-mm-relocation-03.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 03</strong><code>./static/videos/real-mm-relocation-03.mp4</code></div></div><h4>Relocation case 03</h4></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-04.jpg" aria-label="Mobile manipulation target relocation case 4"><source data-src="./static/videos/real-mm-relocation-04.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 04</strong><code>./static/videos/real-mm-relocation-04.mp4</code></div></div><h4>Relocation case 04</h4></article>
+            </div>
           </div>
-          <div class="more-row"><button class="button more-button" type="button" aria-expanded="false" aria-controls="relocation-more">More relocation examples <span aria-hidden="true">＋</span></button><span class="more-hint">2 additional videos</span></div>
-          <div class="more-panel" id="relocation-more"><div class="more-panel-inner"><div class="strip-wrap"><div class="strip-controls"><button class="strip-control" type="button" data-direction="-1" aria-label="Scroll relocation cases left">←</button><button class="strip-control" type="button" data-direction="1" aria-label="Scroll relocation cases right">→</button></div><div class="horizontal-strip">
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video deferred-media" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-03.jpg" aria-label="Mobile manipulation target relocation case 3"><source data-src="./static/videos/real-mm-relocation-03.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 03</strong><code>./static/videos/real-mm-relocation-03.mp4</code></div></div><h4>Additional case 03</h4></article>
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video deferred-media" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-04.jpg" aria-label="Mobile manipulation target relocation case 4"><source data-src="./static/videos/real-mm-relocation-04.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 04</strong><code>./static/videos/real-mm-relocation-04.mp4</code></div></div><h4>Additional case 04</h4></article>
-          </div></div></div></div>
         </div>
 
         <div class="experiment-block">
-          <div class="block-head"><div><h3>Distractors &amp; subtle object motion</h3><p>Stress tests with visually similar distractors or small target displacement. Two cases stay prominent; one appears in the expanded strip.</p></div><span class="tag">3 videos · 2 + 1</span></div>
-          <div class="video-grid">
+          <div class="block-head"><div><h3>Distractors &amp; subtle object motion</h3><p>Stress tests with visually similar distractors or small target displacement. Use the arrows to move between cases.</p></div><span class="tag">3 videos</span></div>
+          <div class="video-carousel" data-carousel>
+            <div class="carousel-controls"><span class="carousel-status">1–2 / 3</span><button class="carousel-control" type="button" data-direction="-1" aria-label="Show previous stress-test videos">←</button><button class="carousel-control" type="button" data-direction="1" aria-label="Show next stress-test videos">→</button></div>
+            <div class="carousel-track">
             <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-distractor-01.jpg" aria-label="Mobile manipulation distractor case 1"><source data-src="./static/videos/real-mm-distractor-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Distractor / subtle motion · 01</strong><code>./static/videos/real-mm-distractor-01.mp4</code></div></div><h4>Featured stress test 01</h4><p class="card-caption">Describe the distractor and the evidence used to maintain identity.</p></article>
             <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-distractor-02.jpg" aria-label="Mobile manipulation subtle object motion case 2"><source data-src="./static/videos/real-mm-distractor-02.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Distractor / subtle motion · 02</strong><code>./static/videos/real-mm-distractor-02.mp4</code></div></div><h4>Featured stress test 02</h4><p class="card-caption">Describe the displacement, correction, and outcome.</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-distractor-03.jpg" aria-label="Mobile manipulation distractor case 3"><source data-src="./static/videos/real-mm-distractor-03.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Distractor / subtle motion · 03</strong><code>./static/videos/real-mm-distractor-03.mp4</code></div></div><h4>Stress test 03</h4></article>
+            </div>
           </div>
-          <div class="more-row"><button class="button more-button" type="button" aria-expanded="false" aria-controls="distractor-more">More stress-test examples <span aria-hidden="true">＋</span></button><span class="more-hint">1 additional video</span></div>
-          <div class="more-panel" id="distractor-more"><div class="more-panel-inner"><div class="strip-wrap"><div class="strip-controls"><button class="strip-control" type="button" data-direction="-1" aria-label="Scroll stress-test cases left">←</button><button class="strip-control" type="button" data-direction="1" aria-label="Scroll stress-test cases right">→</button></div><div class="horizontal-strip">
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video deferred-media" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-distractor-03.jpg" aria-label="Mobile manipulation distractor case 3"><source data-src="./static/videos/real-mm-distractor-03.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Distractor / subtle motion · 03</strong><code>./static/videos/real-mm-distractor-03.mp4</code></div></div><h4>Additional stress test 03</h4></article>
-          </div></div></div></div>
         </div>
 
         <div class="experiment-block">
           <div class="block-head"><div><h3>Failure case</h3><p>One concise, diagnostic example: state what failed, why it failed, and what limitation it exposes.</p></div><span class="tag">1 video</span></div>
-          <div class="video-grid">
+          <div class="video-grid single">
             <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-failure-01.jpg" aria-label="Mobile manipulation failure case"><source data-src="./static/videos/real-mm-failure-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Failure case · 01</strong><code>./static/videos/real-mm-failure-01.mp4</code></div></div><h4>Representative failure</h4><p class="card-caption">Add the failure cause and the boundary of the current system.</p></article>
           </div>
         </div>
@@ -447,24 +435,7 @@
       </div>
     </section>
 
-    <section class="section reveal" id="citation" aria-labelledby="citation-title">
-      <div class="container narrow">
-        <p class="section-kicker">Reference</p><h2 id="citation-title">Citation</h2>
-        <p class="section-intro" style="margin: 14px 0 22px">Replace the placeholder fields once the paper metadata is public.</p>
-        <div class="citation-box"><button class="copy-button" type="button" data-copy-citation>Copy</button><pre id="bibtex">@article{omninav2026,
-  title   = {OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments},
-  author  = {Anonymous Authors},
-  journal = {Under Review},
-  year    = {2026}
-}</pre></div>
-      </div>
-    </section>
   </main>
-
-  <footer>
-    <p>OmniNav project page · Anonymous submission</p>
-    <p>This page contains no analytics and loads experiment media only when needed.</p>
-  </footer>
 
   <script>
     (() => {
@@ -556,15 +527,33 @@
         });
       });
 
-      document.querySelector('[data-copy-citation]').addEventListener('click', async event => {
-        const button = event.currentTarget;
-        try {
-          await navigator.clipboard.writeText(document.getElementById('bibtex').textContent);
-          button.textContent = 'Copied';
-          setTimeout(() => { button.textContent = 'Copy'; }, 1600);
-        } catch (_) {
-          button.textContent = 'Select text';
-        }
+      document.querySelectorAll('[data-carousel]').forEach(carousel => {
+        const track = carousel.querySelector('.carousel-track');
+        const cards = [...track.querySelectorAll('.media-card')];
+        const status = carousel.querySelector('.carousel-status');
+
+        const updateStatus = () => {
+          if (!cards.length) return;
+          const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+          const step = cards[0].getBoundingClientRect().width + gap;
+          const first = Math.max(0, Math.min(cards.length - 1, Math.round(track.scrollLeft / step)));
+          const visible = window.matchMedia('(max-width: 620px)').matches ? 1 : 2;
+          status.textContent = `${first + 1}–${Math.min(first + visible, cards.length)} / ${cards.length}`;
+        };
+
+        carousel.querySelectorAll('.carousel-control').forEach(button => {
+          button.addEventListener('click', () => {
+            const direction = Number(button.dataset.direction || 1);
+            const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+            const visible = window.matchMedia('(max-width: 620px)').matches ? 1 : 2;
+            const step = cards[0].getBoundingClientRect().width + gap;
+            track.scrollBy({ left: direction * visible * step, behavior: reducedMotion ? 'auto' : 'smooth' });
+            window.setTimeout(updateStatus, reducedMotion ? 0 : 420);
+          });
+        });
+        track.addEventListener('scroll', updateStatus, { passive: true });
+        window.addEventListener('resize', updateStatus, { passive: true });
+        updateStatus();
       });
     })();
   </script>

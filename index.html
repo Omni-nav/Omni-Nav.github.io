@@ -1,403 +1,573 @@
-
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description"
-        content="OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments.">
-  <meta name="keywords" content="Long-Horizon Navigation, Dynamic Scene Memory, Visual Language Model, Mobile Manipulation">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OmniNav</title>
-
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
-
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css">
-  <link rel="icon" href="./static/images/favicon.svg">
-  <!-- <link rel="stylesheet" href="./static/css/foundation.css"/> -->
-  <link rel="stylesheet" href="./static/css/titleCenter.css"/>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
+  <meta name="description" content="OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments.">
+  <meta name="keywords" content="long-horizon navigation, object navigation, dynamic scene memory, mobile manipulation, target belief revision">
+  <meta name="theme-color" content="#0b2530">
+  <title>OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230b2530'/%3E%3Cpath d='M14 37c12-22 24-22 36 0' fill='none' stroke='%235fe0bd' stroke-width='6' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='24' r='6' fill='%23fff'/%3E%3C/svg%3E">
   <style>
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 自适应列数 */
-      gap: 20px; /* 图片之间的间距 */
-      padding: 20px;
-}
-    
-/*     .grid-container > div {
-      text-align: center;
-      padding: 0;
-      font-size: 30px;
-    } */
-    .grid-item {
-      background-color: #f0f0f0; /* 设置背景颜色 */
-      border: 1px solid #ccc; /* 可选：边框 */
-      border-radius: 5px; /* 可选：圆角 */
-      overflow: hidden; /* 确保内容不超出边界 */
-      display: flex; /* 使用 Flexbox 居中内容 */
-      justify-content: center; /* 水平居中 */
-      align-items: center; /* 垂直居中 */
-      height: 200px; /* 设置统一高度 */
-}
-        .authors-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .authors-line {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .author-name {
-            font-weight: 500;
-            white-space: nowrap;
-        }
-        .institutions-line {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 30px;
-            margin-top: 15px;
-        }
-        .institution {
-            font-style: italic;
-            color: #555;
-        }
-        .super {
-            vertical-align: super;
-            font-size: smaller;
-            color: #777;
-        }
-  .grid-item img {
-        max-width: 100%; /* 确保图片不超出容器宽度 */
-        max-height: 100%; /* 确保图片不超出容器高度 */
-        object-fit: contain; /* 保持图片比例，填满容器 */
-  }
-    .item1 {
-      grid-column: 1 / 4;
-    }
-    .item2 {
-      grid-column: 5 / 8;
-    }
-    .item3 {
-      grid-column: 1 / 4;
-    }
-    .item4 {
-      grid-column: 5 / 8;
-    }
-    
-    .content h4 {
-      font-size: 16px; !important;
-      padding: 0;
-      margin: 0; !important;
-    }
-     .scene-header {
-            text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        .scene-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: #2c3e50;
-        }
-        
-        .scene-stats {
-            font-size: 16px;
-            color: #7f8c8d;
-        }
-        
-        .scene-content {
-            background-color: white;
-            border-radius: 0 0 8px 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 四列网格 */
-            gap: 15px; /* 项目之间的间隙 */
-        }
-        
-        .scene-item {
-            padding: 12px 15px;
-            font-size: 16px;
-            border-bottom: 1px solid #f0f0f0;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            word-break: break-word;
-        }
-        
-        /* 去掉最后一个项目的下边框 */
-        .scene-item:last-child {
-            border-bottom: 1px solid #f0f0f0;
-        }
-    hr {
-      background-color: lightgray;!important;
-    }
-    .media-wrapper {
-      max-width: 500px;
-      width: 100%;
+    :root {
+      --ink: #12262d;
+      --muted: #60747c;
+      --paper: #f5f7f3;
+      --surface: #ffffff;
+      --navy: #0b2530;
+      --navy-soft: #123b48;
+      --mint: #5fe0bd;
+      --mint-dark: #147b68;
+      --amber: #f1b95b;
+      --line: #dce5e2;
+      --shadow: 0 18px 55px rgba(11, 37, 48, .09);
+      --radius: 20px;
+      --content: 1120px;
     }
 
-/* 当有多个视频时 */
-    .video-container:has(> :nth-child(2)) .media-wrapper {
-      max-width: 500px;
-      flex: 1 1 400px;
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      line-height: 1.68;
+      -webkit-font-smoothing: antialiased;
     }
+    img, video { display: block; width: 100%; }
+    button, a { font: inherit; }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid rgba(20, 123, 104, .35); outline-offset: 3px; }
 
-/* 单个视频时居中 */
-    .video-container:has(> :only-child) .media-wrapper {
-      margin: 0 auto;
+    .skip-link {
+      position: fixed; left: 16px; top: -64px; z-index: 100;
+      padding: 10px 14px; border-radius: 10px; color: #fff; background: var(--navy);
+      transition: top .2s ease;
     }
-    
-    </style>
+    .skip-link:focus { top: 12px; }
+
+    .site-nav {
+      position: sticky; top: 0; z-index: 30;
+      border-bottom: 1px solid rgba(220, 229, 226, .8);
+      background: rgba(245, 247, 243, .88);
+      backdrop-filter: blur(16px);
+    }
+    .nav-inner {
+      width: min(var(--content), calc(100% - 32px)); margin: 0 auto;
+      height: 64px; display: flex; align-items: center; gap: 24px;
+    }
+    .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 9px; position: relative; background: var(--navy);
+    }
+    .brand-mark::before {
+      content: ""; position: absolute; inset: 8px 6px 6px;
+      border: 3px solid var(--mint); border-bottom: 0; border-radius: 50% 50% 0 0;
+    }
+    .nav-links {
+      margin-left: auto; display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none;
+    }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-links a {
+      padding: 8px 10px; border-radius: 9px; color: var(--muted); text-decoration: none;
+      font-size: .88rem; font-weight: 650; white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--ink); background: #fff; }
+
+    .hero {
+      position: relative; overflow: hidden; color: #fff;
+      background:
+        radial-gradient(circle at 79% 22%, rgba(95, 224, 189, .22), transparent 24%),
+        radial-gradient(circle at 16% 88%, rgba(241, 185, 91, .13), transparent 25%),
+        linear-gradient(135deg, #071c25 0%, #0b2b36 58%, #164755 100%);
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0; opacity: .15; pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.13) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, #000, transparent 88%);
+    }
+    .hero-inner {
+      position: relative; z-index: 1; width: min(940px, calc(100% - 40px)); margin: 0 auto;
+      padding: 96px 0 84px; text-align: center;
+    }
+    .eyebrow {
+      margin: 0 0 18px; color: var(--mint); font-size: .78rem; font-weight: 800;
+      letter-spacing: .18em; text-transform: uppercase;
+    }
+    h1 { margin: 0; font-size: clamp(2.35rem, 6vw, 5.2rem); line-height: 1.03; letter-spacing: -.055em; }
+    .hero-subtitle { max-width: 760px; margin: 24px auto 0; color: #d8e8e9; font-size: clamp(1rem, 2.1vw, 1.25rem); }
+    .authors { margin: 23px 0 0; color: #b8cbcf; font-weight: 600; }
+    .hero-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+    .button {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 44px; padding: 10px 18px; border: 1px solid transparent; border-radius: 999px;
+      text-decoration: none; font-weight: 750; cursor: pointer; transition: transform .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .button:hover { transform: translateY(-1px); }
+    .button-primary { color: var(--navy); background: var(--mint); }
+    .button-ghost { color: #fff; border-color: rgba(255,255,255,.25); background: rgba(255,255,255,.07); }
+    .button[aria-disabled="true"] { opacity: .75; }
+    .button-icon { font-size: 1.05em; }
+
+    main { overflow: clip; }
+    .section { padding: 92px 0; }
+    .section:nth-of-type(even) { background: var(--surface); }
+    .container { width: min(var(--content), calc(100% - 40px)); margin: 0 auto; }
+    .narrow { width: min(800px, 100%); margin-inline: auto; }
+    .section-head { display: grid; grid-template-columns: minmax(0, .75fr) minmax(280px, 1fr); gap: 44px; align-items: end; margin-bottom: 34px; }
+    .section-kicker { margin: 0 0 8px; color: var(--mint-dark); font-size: .76rem; font-weight: 850; letter-spacing: .15em; text-transform: uppercase; }
+    h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.08; letter-spacing: -.04em; }
+    h3 { margin: 0; font-size: clamp(1.25rem, 2.4vw, 1.75rem); line-height: 1.2; letter-spacing: -.02em; }
+    h4 { margin: 0; font-size: 1.04rem; line-height: 1.35; }
+    .section-intro { margin: 0; color: var(--muted); }
+    .prose { font-size: 1.05rem; color: #30464e; text-align: justify; }
+    .prose p { margin: 0; }
+
+    .media-shell {
+      position: relative; overflow: hidden; min-height: 230px; border: 1px solid var(--line);
+      border-radius: var(--radius); background: #eaf0ed; box-shadow: var(--shadow);
+    }
+    .media-shell.ratio-wide { aspect-ratio: 16 / 9; }
+    .media-shell.ratio-figure { aspect-ratio: 16 / 8.2; }
+    .media-shell img, .media-shell video { height: 100%; object-fit: contain; background: #edf2ef; }
+    .media-shell video { object-fit: cover; }
+    .placeholder-overlay {
+      position: absolute; inset: 0; display: grid; place-content: center; gap: 10px; padding: 24px;
+      text-align: center; color: #597079; background:
+        linear-gradient(135deg, rgba(255,255,255,.62), rgba(230,239,235,.88)),
+        repeating-linear-gradient(135deg, transparent 0 20px, rgba(11,37,48,.04) 20px 40px);
+      transition: opacity .28s ease;
+    }
+    .placeholder-overlay strong { color: var(--ink); font-size: 1rem; }
+    .placeholder-overlay code { font-size: .76rem; word-break: break-all; }
+    .placeholder-glyph { font-size: 1.65rem; color: var(--mint-dark); }
+    .media-shell.is-ready .placeholder-overlay { opacity: 0; pointer-events: none; }
+    .media-shell.is-missing .placeholder-overlay { opacity: 1; }
+
+    .figure-caption, .card-caption { color: var(--muted); font-size: .88rem; }
+    .figure-caption { max-width: 860px; margin: 14px auto 0; text-align: center; }
+    .framework-copy { margin-bottom: 24px; color: #30464e; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card { min-height: 154px; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
+    .stat-value { margin: 0 0 8px; color: var(--navy); font-size: clamp(1.65rem, 3vw, 2.55rem); font-weight: 850; letter-spacing: -.05em; }
+    .stat-value.accent { color: var(--mint-dark); }
+    .stat-label { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.45; }
+    .pending { font-size: 1.15rem; letter-spacing: 0; color: #819198; }
+
+    .stage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+    .stage { padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+    .stage-number { display: grid; place-items: center; width: 30px; height: 30px; margin-bottom: 16px; border-radius: 50%; color: var(--navy); background: var(--mint); font-weight: 850; }
+    .stage p { margin: 8px 0 0; color: var(--muted); font-size: .88rem; }
+
+    .experiment-block + .experiment-block { margin-top: 64px; padding-top: 64px; border-top: 1px solid var(--line); }
+    .block-head { display: flex; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 22px; }
+    .block-head p { max-width: 650px; margin: 7px 0 0; color: var(--muted); }
+    .tag { display: inline-flex; padding: 5px 9px; border: 1px solid #cddbd7; border-radius: 999px; color: var(--mint-dark); background: #eef8f4; font-size: .72rem; font-weight: 800; white-space: nowrap; }
+    .video-grid, .image-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .video-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .media-card { min-width: 0; }
+    .media-card h4 { margin: 13px 2px 4px; }
+    .media-card .card-caption { margin: 0 2px; }
+
+    .more-row { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+    .more-button { color: #fff; background: var(--navy); }
+    .more-hint { color: var(--muted); font-size: .8rem; }
+    .more-panel { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .42s ease, opacity .3s ease, margin .42s ease; }
+    .more-panel.is-open { grid-template-rows: 1fr; opacity: 1; margin-top: 18px; }
+    .more-panel-inner { min-height: 0; overflow: hidden; }
+    .strip-wrap { position: relative; }
+    .horizontal-strip {
+      display: flex; gap: 16px; overflow-x: auto; padding: 2px 2px 14px;
+      scroll-snap-type: x mandatory; scrollbar-color: var(--mint-dark) #dce7e3; scrollbar-width: thin;
+    }
+    .horizontal-strip .media-card { flex: 0 0 min(520px, 84vw); scroll-snap-align: start; }
+    .strip-controls { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 10px; }
+    .strip-control { width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; color: var(--ink); background: #fff; cursor: pointer; }
+    .strip-control:hover { border-color: var(--mint-dark); }
+
+    .comparison-card { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(0, 1.4fr); gap: 28px; align-items: center; }
+    .comparison-copy { padding: 18px 0; }
+    .comparison-copy p { color: var(--muted); }
+    .comparison-copy ul { padding-left: 1.2rem; color: #30464e; }
+    .comparison-copy li + li { margin-top: 8px; }
+
+    .citation-box { position: relative; padding: 24px; border-radius: 18px; color: #dce9e7; background: var(--navy); overflow-x: auto; }
+    .citation-box pre { margin: 0; font: .86rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre-wrap; }
+    .copy-button { position: absolute; right: 14px; top: 14px; min-height: 36px; padding: 7px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; color: #fff; background: rgba(255,255,255,.08); cursor: pointer; }
+    footer { padding: 38px 20px; color: #9bb0b5; background: #071c25; text-align: center; font-size: .85rem; }
+    footer p { margin: 4px 0; }
+
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .72s ease, transform .72s cubic-bezier(.2,.75,.25,1); }
+    .reveal.is-visible { opacity: 1; transform: none; }
+
+    @media (max-width: 880px) {
+      .section-head, .comparison-card { grid-template-columns: 1fr; gap: 18px; }
+      .stat-grid, .stage-grid { grid-template-columns: repeat(2, 1fr); }
+      .video-grid.three { grid-template-columns: 1fr 1fr; }
+      .video-grid.three .media-card:last-child { grid-column: 1 / -1; width: calc(50% - 9px); }
+      .nav-links a:nth-child(n+5) { display: none; }
+    }
+    @media (max-width: 620px) {
+      .hero-inner { padding: 72px 0 64px; }
+      .section { padding: 70px 0; }
+      .container { width: min(100% - 28px, var(--content)); }
+      .nav-inner { width: min(100% - 24px, var(--content)); }
+      .brand-mark { display: none; }
+      .nav-links { gap: 0; }
+      .nav-links a { padding-inline: 8px; font-size: .79rem; }
+      .video-grid, .image-grid, .video-grid.three, .stat-grid, .stage-grid { grid-template-columns: 1fr; }
+      .video-grid.three .media-card:last-child { grid-column: auto; width: auto; }
+      .block-head { align-items: flex-start; flex-direction: column; }
+      .media-shell { min-height: 190px; }
+      .prose { text-align: left; }
+      .more-hint { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
 </head>
 <body>
-  
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments</h1>
-          <div class="column has-text-centered">
-            <div class="publication-links">
-              <div class="authors-section">
-        <!-- 作者列表 -->
-                <div class = "authors-line"> 
-                    <span class="author-block">Anonymous Authors</span>
-                  </div>
-              </div>
-            </div>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <nav class="site-nav" aria-label="Primary navigation">
+    <div class="nav-inner">
+      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>OmniNav</a>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#framework">Framework</a>
+        <a href="#simulation">Simulation</a>
+        <a href="#real-world">Real World</a>
+        <a href="#comparison">Comparison</a>
+        <a href="#citation">Citation</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <p class="eyebrow">Long-horizon embodied intelligence</p>
+      <h1>OmniNav</h1>
+      <p class="hero-subtitle">Robust Long-Horizon Target Navigation in Dynamic Environments</p>
+      <p class="authors">Anonymous Authors</p>
+      <div class="hero-actions" aria-label="Project resources">
+        <a class="button button-primary resource-placeholder" href="#" aria-disabled="true"><span class="button-icon" aria-hidden="true">↗</span>Paper · Coming soon</a>
+        <a class="button button-ghost resource-placeholder" href="#" aria-disabled="true"><span class="button-icon" aria-hidden="true">⌘</span>Code · Coming soon</a>
+        <a class="button button-ghost" href="#simulation"><span class="button-icon" aria-hidden="true">▶</span>Experiments</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section reveal" aria-labelledby="poster-title">
+      <div class="container">
+        <div class="section-head">
+          <div><p class="section-kicker">Project overview</p><h2 id="poster-title">At a glance</h2></div>
+          <p class="section-intro">A compact overview of OmniNav’s scene-memory, target-reasoning, navigation, and interaction loop.</p>
+        </div>
+        <figure>
+          <div class="media-shell ratio-figure">
+            <img src="./static/poster.png" alt="OmniNav project overview poster" loading="eager" decoding="async">
+            <div class="placeholder-overlay"><span class="placeholder-glyph">◇</span><strong>Project poster</strong><code>./static/poster.png</code></div>
+          </div>
+          <figcaption class="figure-caption">Project overview poster. Replace the file at the path above while keeping the same filename.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section reveal" id="abstract" aria-labelledby="abstract-title">
+      <div class="container narrow">
+        <p class="section-kicker">Overview</p>
+        <h2 id="abstract-title">Abstract</h2>
+        <div class="prose" style="margin-top: 26px">
+          <p>Long-horizon target navigation requires a robot to sustain task execution across evolving observations, decisions, and physical interactions. This requires three coupled capabilities: maintaining valid scene memory, revising target beliefs under partial observability, and selecting interaction-feasible navigation endpoints. However, the state underlying each capability is only conditionally valid: scene representations become stale when objects move or disappear, unsuccessful searches alter beliefs over target locations, and geometrically convenient endpoints may still be infeasible for manipulation. To address these challenges, we present OmniNav, which formulates long-horizon navigation as continual inference over a factorized task state posterior coupling scene validity, target belief, and interaction feasibility. For representation, OmniNav incrementally constructs an updatable 3D object scene memory, preventing stale scene evidence from propagating to subsequent decisions. For exploration, it introduces an evidence-aware Bayesian belief-revision mechanism that derives dependency-aware region priors from semantic context, incorporates unsuccessful searches as negative evidence, and updates them for posterior-guided frontier selection. For interaction, OmniNav incorporates manipulation reachability and collision constraints into navigation-endpoint selection and propagates execution feedback through hierarchical closed-loop recovery. Extensive experiments demonstrate that OmniNav achieves the highest success rates among the compared methods on semantic ObjectNav and fine-grained instance navigation benchmarks, remains robust to target relocation, and improves real-world pick-and-place success from 53.3% to 71.7% over an adapted open-loop baseline.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="framework" aria-labelledby="framework-title">
+      <div class="container">
+        <div class="section-head">
+          <div><p class="section-kicker">Method</p><h2 id="framework-title">Framework</h2></div>
+          <p class="section-intro">Continual inference connects scene validity, target belief, and interaction feasibility across a long-horizon task.</p>
+        </div>
+        <p class="framework-copy">Overall framework of OmniNav. The system consists of three main modules: (i) a dynamic object-centric scene memory that maintains instance-level semantics, geometry, relations, and per-instance persistence beliefs; (ii) a task-grounded exploration–exploitation navigation strategy that balances semantic target reasoning with exploration progress evidence; and (iii) a reachability-aware closed-loop mobile manipulation module that selects interaction-feasible base poses and recovers from execution failures or scene changes.</p>
+        <figure>
+          <div class="media-shell ratio-figure">
+            <img src="./static/framework.png" alt="Overall framework of OmniNav" loading="lazy" decoding="async">
+            <div class="placeholder-overlay"><span class="placeholder-glyph">⌬</span><strong>OmniNav framework</strong><code>./static/framework.png</code></div>
+          </div>
+          <figcaption class="figure-caption">Overall framework of OmniNav.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section reveal" id="highlights" aria-labelledby="highlights-title">
+      <div class="container">
+        <div class="section-head">
+          <div><p class="section-kicker">Evidence</p><h2 id="highlights-title">Quantitative highlights</h2></div>
+          <p class="section-intro">A concise result summary for readers who scan the page before viewing the full demonstrations.</p>
+        </div>
+        <div class="stat-grid">
+          <article class="stat-card"><p class="stat-value pending">Add result</p><p class="stat-label">Semantic ObjectNav success rate / SPL</p></article>
+          <article class="stat-card"><p class="stat-value pending">Add result</p><p class="stat-label">Fine-grained instance navigation success rate</p></article>
+          <article class="stat-card"><p class="stat-value accent">53.3% → 71.7%</p><p class="stat-label">Real-world pick-and-place success over the adapted open-loop baseline</p></article>
+          <article class="stat-card"><p class="stat-value pending">Add result</p><p class="stat-label">Robustness under target relocation</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="memory" aria-labelledby="memory-title">
+      <div class="container">
+        <div class="section-head">
+          <div><p class="section-kicker">Dynamic state</p><h2 id="memory-title">Updatable scene memory</h2></div>
+          <p class="section-intro">Show how instance-level evidence is added, validated, invalidated, and reused as the environment changes.</p>
+        </div>
+        <div class="media-shell ratio-figure">
+          <img class="lazy-image" data-src="./static/images/dynamic-scene-memory.png" alt="Dynamic object-centric scene memory update process" loading="lazy" decoding="async">
+          <div class="placeholder-overlay"><span class="placeholder-glyph">↻</span><strong>Dynamic scene-memory process figure / GIF</strong><code>./static/images/dynamic-scene-memory.png</code></div>
+        </div>
+        <div class="stage-grid" aria-label="Suggested figure stages">
+          <article class="stage"><span class="stage-number">1</span><h4>Observe</h4><p>Detect instances and capture semantics, geometry, and relations.</p></article>
+          <article class="stage"><span class="stage-number">2</span><h4>Associate</h4><p>Match new observations with the persistent object memory.</p></article>
+          <article class="stage"><span class="stage-number">3</span><h4>Validate</h4><p>Revise persistence beliefs when evidence conflicts or objects move.</p></article>
+          <article class="stage"><span class="stage-number">4</span><h4>Reuse</h4><p>Ground subsequent navigation and interaction in the updated state.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="simulation" aria-labelledby="simulation-title">
+      <div class="container">
+        <div class="section-head">
+          <div><p class="section-kicker">Simulation</p><h2 id="simulation-title">Navigation experiments</h2></div>
+          <p class="section-intro">The featured ObjectNav videos also visualize the target-belief revision process, so a duplicate standalone section is intentionally omitted.</p>
+        </div>
+
+        <div class="experiment-block">
+          <div class="block-head"><div><h3>Object navigation</h3><p>Two main demonstrations showing long-horizon search, negative evidence, target-belief revision, and posterior-guided exploration.</p></div><span class="tag">2 featured videos</span></div>
+          <div class="video-grid">
+            <article class="media-card">
+              <div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/sim-objectnav-01.jpg" aria-label="Simulation ObjectNav case 1"><source data-src="./static/videos/sim-objectnav-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><span class="placeholder-glyph">▶</span><strong>ObjectNav · Case 01</strong><code>./static/videos/sim-objectnav-01.mp4</code></div></div>
+              <h4>Belief revision during search</h4><p class="card-caption">Add a one-sentence task description and the key change in posterior belief.</p>
+            </article>
+            <article class="media-card">
+              <div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/sim-objectnav-02.jpg" aria-label="Simulation ObjectNav case 2"><source data-src="./static/videos/sim-objectnav-02.mp4" type="video/mp4"></video><div class="placeholder-overlay"><span class="placeholder-glyph">▶</span><strong>ObjectNav · Case 02</strong><code>./static/videos/sim-objectnav-02.mp4</code></div></div>
+              <h4>Posterior-guided exploration</h4><p class="card-caption">Add the target, environment, and final outcome.</p>
+            </article>
+          </div>
+        </div>
+
+        <div class="experiment-block">
+          <div class="block-head"><div><h3>Fine-grained instance matching</h3><p>Use a large primary result image for the core comparison, with optional cases available in a compact horizontal gallery.</p></div><span class="tag">Image results</span></div>
+          <article class="media-card">
+            <div class="media-shell ratio-figure"><img class="lazy-image" data-src="./static/images/fine-grained-matching-main.png" alt="Fine-grained instance matching overview" loading="lazy" decoding="async"><div class="placeholder-overlay"><span class="placeholder-glyph">▦</span><strong>Main fine-grained matching figure</strong><code>./static/images/fine-grained-matching-main.png</code></div></div>
+            <h4>Query-to-instance correspondence</h4><p class="card-caption">Recommended layout: query crop → candidate observations → selected instance, with confidence or similarity cues.</p>
+          </article>
+          <div class="more-row"><button class="button more-button" type="button" aria-expanded="false" aria-controls="matching-more">More matching cases <span aria-hidden="true">＋</span></button><span class="more-hint">Expands into a horizontally scrollable gallery</span></div>
+          <div class="more-panel" id="matching-more"><div class="more-panel-inner"><div class="strip-wrap"><div class="strip-controls"><button class="strip-control" type="button" data-direction="-1" aria-label="Scroll matching cases left">←</button><button class="strip-control" type="button" data-direction="1" aria-label="Scroll matching cases right">→</button></div><div class="horizontal-strip">
+            <article class="media-card"><div class="media-shell ratio-wide"><img class="lazy-image deferred-media" data-src="./static/images/fine-grained-matching-02.png" alt="Fine-grained matching case 2" loading="lazy"><div class="placeholder-overlay"><strong>Matching case 02</strong><code>./static/images/fine-grained-matching-02.png</code></div></div></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><img class="lazy-image deferred-media" data-src="./static/images/fine-grained-matching-03.png" alt="Fine-grained matching case 3" loading="lazy"><div class="placeholder-overlay"><strong>Matching case 03</strong><code>./static/images/fine-grained-matching-03.png</code></div></div></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><img class="lazy-image deferred-media" data-src="./static/images/fine-grained-matching-04.png" alt="Fine-grained matching case 4" loading="lazy"><div class="placeholder-overlay"><strong>Matching case 04</strong><code>./static/images/fine-grained-matching-04.png</code></div></div></article>
+          </div></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="real-world" aria-labelledby="real-title">
+      <div class="container">
+        <div class="section-head">
+          <div><p class="section-kicker">Real world</p><h2 id="real-title">Long-horizon deployment</h2></div>
+          <p class="section-intro">Main videos remain visible in the reading flow. Extra cases stay collapsed until requested, keeping the page fast and focused.</p>
+        </div>
+
+        <div class="experiment-block">
+          <div class="block-head"><div><h3>Long-sequence navigation</h3><p>Three representative real-world sequences. Keep captions task-specific: target, scene change, recovery behavior, and outcome.</p></div><span class="tag">3 featured videos</span></div>
+          <div class="video-grid three">
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-long-horizon-01.jpg" aria-label="Real-world long sequence navigation case 1"><source data-src="./static/videos/real-long-horizon-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Long sequence · 01</strong><code>./static/videos/real-long-horizon-01.mp4</code></div></div><h4>Sequence 01</h4><p class="card-caption">Add target, route length / duration, and result.</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-long-horizon-02.jpg" aria-label="Real-world long sequence navigation case 2"><source data-src="./static/videos/real-long-horizon-02.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Long sequence · 02</strong><code>./static/videos/real-long-horizon-02.mp4</code></div></div><h4>Sequence 02</h4><p class="card-caption">Add the main decision or recovery event.</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-long-horizon-03.jpg" aria-label="Real-world long sequence navigation case 3"><source data-src="./static/videos/real-long-horizon-03.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Long sequence · 03</strong><code>./static/videos/real-long-horizon-03.mp4</code></div></div><h4>Sequence 03</h4><p class="card-caption">Add the key environmental change and outcome.</p></article>
+          </div>
+        </div>
+
+        <div class="experiment-block">
+          <div class="block-head"><div><h3>Mobile manipulation</h3><p>Standard navigation-to-interaction demonstrations with reachability-aware endpoint selection and closed-loop execution.</p></div><span class="tag">2 featured videos</span></div>
+          <div class="video-grid">
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-standard-01.jpg" aria-label="Standard mobile manipulation case 1"><source data-src="./static/videos/real-mm-standard-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Standard MM · 01</strong><code>./static/videos/real-mm-standard-01.mp4</code></div></div><h4>Standard task 01</h4><p class="card-caption">Add the requested object and manipulation outcome.</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-standard-02.jpg" aria-label="Standard mobile manipulation case 2"><source data-src="./static/videos/real-mm-standard-02.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Standard MM · 02</strong><code>./static/videos/real-mm-standard-02.mp4</code></div></div><h4>Standard task 02</h4><p class="card-caption">Add the selected base pose and final outcome.</p></article>
+          </div>
+        </div>
+
+        <div class="experiment-block">
+          <div class="block-head"><div><h3>Target relocation</h3><p>The target is moved after it has been observed. Two primary cases are shown in the article; two further cases are available on demand.</p></div><span class="tag">4 videos · 2 + 2</span></div>
+          <div class="video-grid">
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-01.jpg" aria-label="Mobile manipulation target relocation case 1"><source data-src="./static/videos/real-mm-relocation-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 01</strong><code>./static/videos/real-mm-relocation-01.mp4</code></div></div><h4>Featured relocation case 01</h4><p class="card-caption">Describe how stale evidence is rejected and the target is reacquired.</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-02.jpg" aria-label="Mobile manipulation target relocation case 2"><source data-src="./static/videos/real-mm-relocation-02.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 02</strong><code>./static/videos/real-mm-relocation-02.mp4</code></div></div><h4>Featured relocation case 02</h4><p class="card-caption">Describe belief revision and closed-loop recovery.</p></article>
+          </div>
+          <div class="more-row"><button class="button more-button" type="button" aria-expanded="false" aria-controls="relocation-more">More relocation examples <span aria-hidden="true">＋</span></button><span class="more-hint">2 additional videos</span></div>
+          <div class="more-panel" id="relocation-more"><div class="more-panel-inner"><div class="strip-wrap"><div class="strip-controls"><button class="strip-control" type="button" data-direction="-1" aria-label="Scroll relocation cases left">←</button><button class="strip-control" type="button" data-direction="1" aria-label="Scroll relocation cases right">→</button></div><div class="horizontal-strip">
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video deferred-media" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-03.jpg" aria-label="Mobile manipulation target relocation case 3"><source data-src="./static/videos/real-mm-relocation-03.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 03</strong><code>./static/videos/real-mm-relocation-03.mp4</code></div></div><h4>Additional case 03</h4></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video deferred-media" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-relocation-04.jpg" aria-label="Mobile manipulation target relocation case 4"><source data-src="./static/videos/real-mm-relocation-04.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Relocation · 04</strong><code>./static/videos/real-mm-relocation-04.mp4</code></div></div><h4>Additional case 04</h4></article>
+          </div></div></div></div>
+        </div>
+
+        <div class="experiment-block">
+          <div class="block-head"><div><h3>Distractors &amp; subtle object motion</h3><p>Stress tests with visually similar distractors or small target displacement. Two cases stay prominent; one appears in the expanded strip.</p></div><span class="tag">3 videos · 2 + 1</span></div>
+          <div class="video-grid">
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-distractor-01.jpg" aria-label="Mobile manipulation distractor case 1"><source data-src="./static/videos/real-mm-distractor-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Distractor / subtle motion · 01</strong><code>./static/videos/real-mm-distractor-01.mp4</code></div></div><h4>Featured stress test 01</h4><p class="card-caption">Describe the distractor and the evidence used to maintain identity.</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-distractor-02.jpg" aria-label="Mobile manipulation subtle object motion case 2"><source data-src="./static/videos/real-mm-distractor-02.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Distractor / subtle motion · 02</strong><code>./static/videos/real-mm-distractor-02.mp4</code></div></div><h4>Featured stress test 02</h4><p class="card-caption">Describe the displacement, correction, and outcome.</p></article>
+          </div>
+          <div class="more-row"><button class="button more-button" type="button" aria-expanded="false" aria-controls="distractor-more">More stress-test examples <span aria-hidden="true">＋</span></button><span class="more-hint">1 additional video</span></div>
+          <div class="more-panel" id="distractor-more"><div class="more-panel-inner"><div class="strip-wrap"><div class="strip-controls"><button class="strip-control" type="button" data-direction="-1" aria-label="Scroll stress-test cases left">←</button><button class="strip-control" type="button" data-direction="1" aria-label="Scroll stress-test cases right">→</button></div><div class="horizontal-strip">
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video deferred-media" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-distractor-03.jpg" aria-label="Mobile manipulation distractor case 3"><source data-src="./static/videos/real-mm-distractor-03.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Distractor / subtle motion · 03</strong><code>./static/videos/real-mm-distractor-03.mp4</code></div></div><h4>Additional stress test 03</h4></article>
+          </div></div></div></div>
+        </div>
+
+        <div class="experiment-block">
+          <div class="block-head"><div><h3>Failure case</h3><p>One concise, diagnostic example: state what failed, why it failed, and what limitation it exposes.</p></div><span class="tag">1 video</span></div>
+          <div class="video-grid">
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" poster="./static/images/posters/real-mm-failure-01.jpg" aria-label="Mobile manipulation failure case"><source data-src="./static/videos/real-mm-failure-01.mp4" type="video/mp4"></video><div class="placeholder-overlay"><strong>Failure case · 01</strong><code>./static/videos/real-mm-failure-01.mp4</code></div></div><h4>Representative failure</h4><p class="card-caption">Add the failure cause and the boundary of the current system.</p></article>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-  
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <style>
-        .title.is-3 {
-          text-align: center;
+    </section>
+
+    <section class="section reveal" id="comparison" aria-labelledby="comparison-title">
+      <div class="container">
+        <div class="section-head">
+          <div><p class="section-kicker">Context</p><h2 id="comparison-title">Baseline comparison</h2></div>
+          <p class="section-intro">A visual comparison makes the behavioral difference easier to understand than a dense table alone.</p>
+        </div>
+        <div class="comparison-card">
+          <div class="comparison-copy"><h3>What to emphasize</h3><p>Use a synchronized qualitative example or a compact trajectory / timeline figure.</p><ul><li>Stale scene evidence versus updated memory</li><li>Fixed prior versus evidence-aware belief revision</li><li>Geometric endpoint versus interaction-feasible endpoint</li><li>Open-loop execution versus closed-loop recovery</li></ul></div>
+          <div class="media-shell ratio-wide"><img class="lazy-image" data-src="./static/images/baseline-comparison.png" alt="Qualitative comparison between OmniNav and a baseline" loading="lazy" decoding="async"><div class="placeholder-overlay"><span class="placeholder-glyph">⇄</span><strong>OmniNav vs. baseline comparison</strong><code>./static/images/baseline-comparison.png</code></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="citation" aria-labelledby="citation-title">
+      <div class="container narrow">
+        <p class="section-kicker">Reference</p><h2 id="citation-title">Citation</h2>
+        <p class="section-intro" style="margin: 14px 0 22px">Replace the placeholder fields once the paper metadata is public.</p>
+        <div class="citation-box"><button class="copy-button" type="button" data-copy-citation>Copy</button><pre id="bibtex">@article{omninav2026,
+  title   = {OmniNav: Robust Long-Horizon Target Navigation in Dynamic Environments},
+  author  = {Anonymous Authors},
+  journal = {Under Review},
+  year    = {2026}
+}</pre></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>OmniNav project page · Anonymous submission</p>
+    <p>This page contains no analytics and loads experiment media only when needed.</p>
+  </footer>
+
+  <script>
+    (() => {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      document.querySelectorAll('.resource-placeholder').forEach(link => {
+        link.addEventListener('click', event => event.preventDefault());
+      });
+
+      const markReady = media => {
+        const shell = media.closest('.media-shell');
+        if (shell) { shell.classList.add('is-ready'); shell.classList.remove('is-missing'); }
+      };
+      const markMissing = media => {
+        const shell = media.closest('.media-shell');
+        if (shell) { shell.classList.add('is-missing'); shell.classList.remove('is-ready'); }
+      };
+
+      document.querySelectorAll('.media-shell img[src]').forEach(image => {
+        if (image.complete) image.naturalWidth ? markReady(image) : markMissing(image);
+        image.addEventListener('load', () => markReady(image));
+        image.addEventListener('error', () => markMissing(image));
+      });
+
+      const loadMedia = media => {
+        if (media.dataset.loaded === 'true') return;
+        if (media.matches('img[data-src]')) {
+          media.src = media.dataset.src;
+          media.removeAttribute('data-src');
+          media.addEventListener('load', () => markReady(media), { once: true });
+          media.addEventListener('error', () => markMissing(media), { once: true });
+        } else if (media.matches('video')) {
+          const source = media.querySelector('source[data-src]');
+          if (source) {
+            source.src = source.dataset.src;
+            source.removeAttribute('data-src');
+            media.load();
+          }
+          media.addEventListener('loadeddata', () => markReady(media), { once: true });
+          media.addEventListener('error', () => markMissing(media), { once: true });
         }
-        #teaser {
-          max-width: 100%;  
-          height: auto;     
-          display: block;   
-          margin-left: auto;
-          margin-right: auto;
+        media.dataset.loaded = 'true';
+      };
+
+      const mediaObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && !entry.target.classList.contains('deferred-media')) {
+            loadMedia(entry.target);
+            mediaObserver.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '420px 0px' }) : null;
+
+      document.querySelectorAll('.lazy-image, .lazy-video').forEach(media => {
+        if (mediaObserver) mediaObserver.observe(media);
+        else if (!media.classList.contains('deferred-media')) loadMedia(media);
+      });
+
+      if ('IntersectionObserver' in window && !reducedMotion) {
+        const revealObserver = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              revealObserver.unobserve(entry.target);
+            }
+          });
+        }, { threshold: .08, rootMargin: '0px 0px -7% 0px' });
+        document.querySelectorAll('.reveal').forEach(section => revealObserver.observe(section));
+      } else {
+        document.querySelectorAll('.reveal').forEach(section => section.classList.add('is-visible'));
+      }
+
+      document.querySelectorAll('.more-button').forEach(button => {
+        button.addEventListener('click', () => {
+          const panel = document.getElementById(button.getAttribute('aria-controls'));
+          const open = button.getAttribute('aria-expanded') === 'true';
+          button.setAttribute('aria-expanded', String(!open));
+          panel.classList.toggle('is-open', !open);
+          button.querySelector('[aria-hidden="true"]').textContent = open ? '＋' : '−';
+          if (!open) panel.querySelectorAll('.deferred-media').forEach(loadMedia);
+        });
+      });
+
+      document.querySelectorAll('.strip-control').forEach(button => {
+        button.addEventListener('click', () => {
+          const strip = button.closest('.strip-wrap').querySelector('.horizontal-strip');
+          const direction = Number(button.dataset.direction || 1);
+          strip.scrollBy({ left: direction * Math.min(strip.clientWidth * .82, 520), behavior: reducedMotion ? 'auto' : 'smooth' });
+        });
+      });
+
+      document.querySelector('[data-copy-citation]').addEventListener('click', async event => {
+        const button = event.currentTarget;
+        try {
+          await navigator.clipboard.writeText(document.getElementById('bibtex').textContent);
+          button.textContent = 'Copied';
+          setTimeout(() => { button.textContent = 'Copy'; }, 1600);
+        } catch (_) {
+          button.textContent = 'Select text';
         }
-      </style>
-      <h2 class="title is-3">Poster</h2>
-      <img id="teaser1" src="./static/poster.png" alt="teaser">
-      <!--
-      <h2 class="subtitle has-text-centered">
-        <span class="dnerf"> "Point to Point" represents the shortest path navigation. </span>
-      </h2>
-      -->
-    </div>
-  </div>
-</section>
-
-
-  <section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-            Long-horizon target navigation requires a robot to sustain task execution across evolving observations, decisions, and physical interactions.
-This requires three coupled capabilities: maintaining valid scene memory, revising target beliefs under partial observability, and selecting interaction-feasible navigation endpoints. 
-However, the state underlying each capability is only conditionally valid: scene representations become stale when objects move or disappear, unsuccessful searches alter beliefs over target locations,
-and geometrically convenient endpoints may still be infeasible for manipulation. To address these challenges, we present OmniNav, which formulates long-horizon navigation as continual inference over a factorized task state posterior coupling scene validity, target belief, and
-interaction feasibility. For representation, OmniNav incrementally constructs an updatable 3D object
-scene memory, preventing stale scene evidence from propagating to
-subsequent decisions. For exploration, it introduces an evidence-aware
-Bayesian belief-revision mechanism that derives dependency-aware region
-priors from semantic context, incorporates unsuccessful searches as
-negative evidence, and updates them for posterior-guided frontier
-selection. For interaction, OmniNav incorporates manipulation reachability
-and collision constraints into navigation-endpoint selection and propagates
-execution feedback through hierarchical closed-loop recovery. Extensive experiments demonstrate that OmniNav achieves the highest
-success rates among the compared methods on semantic ObjectNav and
-fine-grained instance navigation benchmarks,
-remains robust to target relocation, and improves real-world pick-and-place
-success from 53.3% to 71.7% over an adapted open-loop baseline.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <style>
-        .title.is-3 {
-          text-align: center;
-        }
-      </style>
-      <h2 class="title is-3">Framework</h2>
-      <div class="content has-text-justified">
-          Overall framework of OmniNav. The system consists of three main modules: (i) a dynamic object-centric scene memory that maintains instance-level semantics, geometry, relations, 
-          and per-instance persistence beliefs; (ii) a task-grounded exploration-exploitation navigation strategy 
-          that balances semantic target reasoning with exploration progress evidence; and (iii) a reachability-aware closed-loop mobile manipulation module that selects interaction-feasible base poses and recovers from execution failures or scene changes.
-        </p>
-      </div>
-      <img id="teaser3" src="./static/framework.png" alt="teaser">
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <!-- Animation. -->
-      <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Results</h2>
-
-        <!-- Interpolating. -->
-        <h3 class="title is-4">1. Query Experiments</h3>
-        <h4 class="title is-5">1.1 Object Query on the Outdated Offline Map (instance, demand, and carried-by relationship)</h4>
-          <img id="teaser4" src="./static/scene1-new.png" alt="teaser">
-        <div class="scene-header">
-            <h1 class="scene-title">Scene 1</h1>
-            <div class="scene-stats">Other 8 instructions</div>
-        </div>
-    
-        <div class="scene-content">
-          <div class="scene-item">towel</div>
-          <div class="scene-item">I want to sit</div>
-          <div class="scene-item">green box</div>
-          <div class="scene-item">a black book on bed</div>
-          <div class="scene-item">I want to sleep</div>
-          <div class="scene-item">I need to use the toilet</div>
-          <div class="scene-item">black mug</div>
-          <div class="scene-item">a blue box on bed</div>
-        </div>  
-          <h2 class="subtitle has-text-centered">
-            
-          </h2>
-        
-        
-        <h4 class="title is-5">1.2 Other Relationship queries of the initial CRSG</h4>
-            <div class="image-wrapper">
-              <img id="teaser8" src="./static/edge query.png" alt="teaser">
-            </div>
-            <h4 class="title is-5">1.3 Other Relationship queries of the updated CRSG</h4>
-            <div class="image-wrapper">
-              <img id="teaser8" src="./static/below_next_to_after_update.png" alt="teaser">
-            </div>
-        <div class="video-container">
-          <div class="media-wrapper">
-            <div class="video-wrapper"> 
-              <video autoplay muted loop playsinline controls width="100%" height="auto">
-                <source src="./static/videos/relationship query.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-        <br>
-        <!--/ Interpolating. -->
-
-        <!-- Re-rendering. -->
-        <h3 class="title is-4">2. Long-sequence Navigation Task for Frequently Used Everyday Items</h3>
-        <img src="./static/all_instances.png" alt="image">
-        <div class="video-container">
-          <div class="media-wrapper">
-            <!-- Image -->
-            <img src="./static/tasklist2.png" alt="image">
-            <div class="video-wrapper"> 
-              <video autoplay muted loop playsinline controls width="100%" height="auto">
-                <source src="./static/videos/Simulation1.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-              <h3 class="subtitle is-6">Simulation 1</h3>
-            </div>
-          </div>
-          <div class="media-wrapper">
-            <img src="./static/tasklist1.png" alt="image">
-            <div class="video-wrapper">
-              <video autoplay muted loop playsinline controls width="100%" height="auto">
-                <source src="./static/videos/Simulation2.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-              <h3 class="subtitle is-6">Simulation 2</h3>
-            </div>
-          </div>
-        </div>
-        
-        <!--/ Re-rendering. -->
-
-        <h3 class="title is-4">3. Real-World Navigation Experiments</h3>
-        <img id="teaser1" src="./static/scene_objects.png" alt="teaser">
-      <h2 class="title is-6 has-text-centered">
-      Different scenes, carrying surfaces, and target instances in the real-world experiments.
-      </h2>
-        <h4 class="title is-5">3.1 Scene 1: Single object navigation</h4>
-        <div class="video-container">
-          <div class="media-wrapper">
-            <div class="video-wrapper"> 
-              <video autoplay muted loop playsinline controls width="100%" height="auto">
-                <source src="./static/videos/actual1.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-              <h3 class="subtitle is-6">Task caption: plant</h3>
-            </div>
-          </div>
-          <div class="media-wrapper">
-            <div class="video-wrapper">
-              <video autoplay muted loop playsinline controls width="100%" height="auto">
-                <source src="./static/videos/actual2.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-              <h3 class="subtitle is-6">Task caption: red book</h3>
-            </div>
-          </div>
-        </div>
-        <h4 class="title is-5">3.2 Scene 2: Single object navigation</h4>
-        <div class="video-container">
-          <div class="media-wrapper">
-            <div class="video-wrapper"> 
-              <video autoplay muted loop playsinline controls width=300 height="auto">
-                <source src="./static/videos/red cup.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-              <h3 class="subtitle is-6">Task caption: red cup</h3>
-            </div>
-          </div>
-        </div>
-      </div>
-      </div>
-    </div>
-  </div>
-</section>
-
+      });
+    })();
+  </script>
 </body>
 </html>

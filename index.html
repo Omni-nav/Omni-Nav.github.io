@@ -250,10 +250,8 @@
 
   <header class="hero" id="top">
     <div class="hero-inner">
-      <p class="eyebrow">Long-horizon embodied intelligence</p>
       <h1>OmniNav</h1>
       <p class="hero-subtitle">Robust Long-Horizon Target Navigation in Dynamic Environments</p>
-      <p class="authors">Anonymous Authors</p>
       <div class="hero-actions" aria-label="Project resources">
         <a class="button button-primary resource-placeholder" href="#" aria-disabled="true"><span class="button-icon" aria-hidden="true">↗</span>Paper · Coming soon</a>
         <a class="button button-ghost resource-placeholder" href="#" aria-disabled="true"><span class="button-icon" aria-hidden="true">⌘</span>Code · Coming soon</a>
@@ -274,7 +272,6 @@
             <img src="./static/poster.png" alt="OmniNav project overview poster" loading="eager" decoding="async">
             <div class="placeholder-overlay"><span class="placeholder-glyph">◇</span><strong>Project poster</strong><code>./static/poster.png</code></div>
           </div>
-          <figcaption class="figure-caption">Project overview poster. Replace the file at the path above while keeping the same filename.</figcaption>
         </figure>
       </div>
     </section>
@@ -295,13 +292,15 @@
           <div><p class="section-kicker">Method</p><h2 id="framework-title">Framework</h2></div>
           <p class="section-intro">Continual inference connects scene validity, target belief, and interaction feasibility across a long-horizon task.</p>
         </div>
-        <p class="framework-copy">Overall framework of OmniNav. The system consists of three main modules: (i) a dynamic object-centric scene memory that maintains instance-level semantics, geometry, relations, and per-instance persistence beliefs; (ii) a task-grounded exploration–exploitation navigation strategy that balances semantic target reasoning with exploration progress evidence; and (iii) a reachability-aware closed-loop mobile manipulation module that selects interaction-feasible base poses and recovers from execution failures or scene changes.</p>
+        <p class="framework-copy">Overall framework of OmniNav. The system consists of three main modules: 
+          (i) a dynamic object-centric scene memory that maintains instance-level semantics, geometry, relations, posterior persistence beliefs, and an auxiliary 2D exploration-progress ma; 
+          (ii) a task-grounded exploration–exploitation navigation strategy that balances semantic target reasoning with exploration progress evidence; 
+          and (iii) a reachability-aware closed-loop mobile manipulation module that selects interaction-feasible base poses and recovers from execution failures or scene changes.</p>
         <figure>
           <div class="media-shell ratio-figure">
             <img src="./static/framework.png" alt="Overall framework of OmniNav" loading="lazy" decoding="async">
             <div class="placeholder-overlay"><span class="placeholder-glyph">⌬</span><strong>OmniNav framework</strong><code>./static/framework.png</code></div>
           </div>
-          <figcaption class="figure-caption">Overall framework of OmniNav.</figcaption>
         </figure>
       </div>
     </section>

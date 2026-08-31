@@ -113,6 +113,19 @@
     .media-shell.ratio-figure { aspect-ratio: 16 / 8.2; }
     .media-shell img, .media-shell video { height: 100%; object-fit: contain; background: #edf2ef; }
     .media-shell video { object-fit: cover; }
+    .media-shell.fine-grained-figure {
+      aspect-ratio: auto;
+      min-height: 260px;
+      background: #fff;
+    }
+    .media-shell.fine-grained-figure img {
+      height: auto;
+      object-fit: contain;
+      background: #fff;
+    }
+    .media-shell.fine-grained-figure .placeholder-overlay {
+      background: #fff;
+    }
     .placeholder-overlay {
       position: absolute; inset: 0; display: grid; place-content: center; gap: 10px; padding: 24px;
       text-align: center; color: #597079; background:
@@ -354,7 +367,7 @@
         <div class="experiment-block">
           <div class="block-head"><div><h3>Fine-grained instance matching</h3><p>An overview figure presents the query, candidate observations, and selected target instance.</p></div><span class="tag">1 figure</span></div>
           <article class="media-card">
-            <div class="media-shell ratio-figure"><img class="lazy-image" data-src="./static/ex-fine-grained-2.png" alt="Fine-grained instance matching overview" loading="lazy" decoding="async"><div class="placeholder-overlay"><span class="placeholder-glyph">▦</span></div></div>
+            <div class="media-shell fine-grained-figure"><img class="lazy-image" data-src="./static/ex-fine-grained-2.png" alt="Fine-grained instance matching overview" loading="lazy" decoding="async"><div class="placeholder-overlay"><span class="placeholder-glyph">▦</span></div></div>
           </article>
         </div>
       </div>

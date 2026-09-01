@@ -143,12 +143,32 @@
     .figure-caption { max-width: 860px; margin: 14px auto 0; text-align: center; }
     .framework-copy { margin-bottom: 24px; color: #30464e; }
 
-    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-    .stat-card { min-height: 154px; padding: 22px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
-    .stat-value { margin: 0 0 8px; color: var(--navy); font-size: clamp(1.65rem, 3vw, 2.55rem); font-weight: 850; letter-spacing: -.05em; }
-    .stat-value.accent { color: var(--mint-dark); }
-    .stat-label { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.45; }
-    .pending { font-size: 1.15rem; letter-spacing: 0; color: #819198; }
+    .stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .stat-card {
+      min-height: 224px; padding: 26px; border: 1px solid var(--line); border-radius: 18px;
+      background: var(--surface); display: flex; flex-direction: column;
+    }
+    .stat-eyebrow {
+      margin: 0; color: var(--muted); font-size: .76rem; font-weight: 750;
+      letter-spacing: .08em; text-transform: uppercase;
+    }
+    .stat-values {
+      display: flex; align-items: baseline; flex-wrap: nowrap; gap: 10px;
+      margin: 15px 0 2px; white-space: nowrap;
+    }
+    .stat-number {
+      color: var(--navy); font-size: clamp(1.8rem, 3.05vw, 2.55rem);
+      font-weight: 850; line-height: 1.08; letter-spacing: -.05em;
+    }
+    .stat-number.emphasis { color: var(--mint-dark); }
+    .stat-number.baseline { color: #718187; }
+    .stat-separator { color: #9aaba9; font-size: 1.3rem; font-weight: 650; }
+    .stat-metric { margin: 4px 0 0; color: var(--ink); font-size: .88rem; font-weight: 700; }
+    .stat-note {
+      margin: auto 0 0; padding-top: 18px; border-top: 1px solid var(--line);
+      color: var(--muted); font-size: .82rem; line-height: 1.45;
+    }
+    .stat-note strong { color: var(--mint-dark); font-weight: 800; }
 
     .stage-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
     .stage { padding: 18px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
@@ -158,7 +178,6 @@
     .experiment-block + .experiment-block { margin-top: 64px; padding-top: 64px; border-top: 1px solid var(--line); }
     .block-head { display: flex; justify-content: space-between; gap: 20px; align-items: end; margin-bottom: 22px; }
     .block-head p { max-width: 650px; margin: 7px 0 0; color: var(--muted); }
-    .tag { display: inline-flex; padding: 5px 9px; border: 1px solid #cddbd7; border-radius: 999px; color: var(--mint-dark); background: #eef8f4; font-size: .72rem; font-weight: 800; white-space: nowrap; }
     .video-grid, .image-grid {
       display: grid; grid-template-columns: repeat(2, minmax(0, 500px));
       justify-content: center; gap: var(--video-gap);
@@ -167,6 +186,13 @@
     .media-card { min-width: 0; }
     .media-card h4 { margin: 13px 2px 4px; }
     .media-card .card-caption { margin: 0 2px; }
+    .challenge-note {
+      margin: 9px 2px 0; padding: 6px 0 6px 11px; border-left: 3px solid #9bcfc1;
+      color: var(--muted); font-size: .82rem; line-height: 1.45;
+    }
+    .challenge-note strong {
+      margin-right: 6px; color: var(--mint-dark); font-weight: 800;
+    }
 
     .more-row { display: flex; align-items: center; gap: 12px; margin-top: 20px; }
     .more-button { color: #fff; background: var(--navy); }
@@ -228,6 +254,8 @@
       .nav-links { gap: 0; }
       .nav-links a { padding-inline: 8px; font-size: .79rem; }
       .video-grid, .image-grid, .stat-grid, .stage-grid { grid-template-columns: 1fr; }
+      .stat-card { min-height: 205px; }
+      .stat-number { font-size: clamp(2rem, 10vw, 2.6rem); }
       .carousel-track .media-card { flex-basis: 100%; }
       .block-head { align-items: flex-start; flex-direction: column; }
       .media-shell { min-height: 190px; }
@@ -314,24 +342,35 @@
       </div>
     </section>
 
+    <!-- Quantitative highlights: uncomment this section when needed.
     <section class="section reveal" id="highlights" aria-labelledby="highlights-title">
       <div class="container">
-        <div class="section-head">
+        <div class="section-head single">
           <div><h2 id="highlights-title">Quantitative highlights</h2></div>
         </div>
         <div class="stat-grid">
           <article class="stat-card">
-            <p class="stat-value accent">47.3% / 18.0%</p>
-            <p class="stat-label">MP3D ObjectNav SR / SPL<br>+5.3 / +1.6 pp over the best baseline</p>
+            <p class="stat-eyebrow">MP3D ObjectNav</p>
+            <div class="stat-values"><span class="stat-number emphasis">47.3%</span><span class="stat-separator">/</span><span class="stat-number emphasis">18.0%</span></div>
+            <p class="stat-metric">SR / SPL</p>
+            <p class="stat-note"><strong>+5.3 pp SR</strong> and <strong>+1.6 pp SPL</strong><br>over the best baseline</p>
           </article>
           <article class="stat-card">
-            <p class="stat-value accent">27.1% SR</p>
-            <p class="stat-label">Fine-grained instance navigation on HM3D<br>+4.6 pp over GLMap</p>
+            <p class="stat-eyebrow">HM3D Fine-grained Navigation</p>
+            <div class="stat-values"><span class="stat-number emphasis">27.1%</span></div>
+            <p class="stat-metric">Success rate</p>
+            <p class="stat-note"><strong>+4.6 pp</strong> over GLMap</p>
           </article>
-          <article class="stat-card"><p class="stat-value accent">53.3% → 71.7%</p><p class="stat-label">Real-world pick-and-place success over the adapted open-loop baseline</p></article>
+          <article class="stat-card">
+            <p class="stat-eyebrow">Real-world Mobile Manipulation</p>
+            <div class="stat-values"><span class="stat-number baseline">53.3%</span><span class="stat-separator">→</span><span class="stat-number emphasis">71.7%</span></div>
+            <p class="stat-metric">Overall success rate</p>
+            <p class="stat-note"><strong>+18.4 pp</strong> over the adapted open-loop baseline</p>
+          </article>
         </div>
       </div>
     </section>
+    -->
 
     <!-- <section class="section reveal" id="memory" aria-labelledby="memory-title">
       <div class="container">
@@ -359,6 +398,7 @@
         </div>
 
         <div class="experiment-block">
+          <div class="block-head"><div><h3>Object navigation</h3></div></div>
           <div class="video-grid">
             <article class="media-card">
               <div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none"><source data-src="./static/sofa.mp4" type="video/mp4"></video><div class="placeholder-overlay"><span class="placeholder-glyph">▶</span><strong>ObjectNav · Case 01</strong><code>./static/sofa.mp4</code></div></div>
@@ -371,7 +411,7 @@
         </div>
 
         <div class="experiment-block">
-          <div class="block-head"><div><h3>Fine-grained instance matching</h3><p>An overview figure presents the query, candidate observations, and selected target instance.</p></div><span class="tag">1 figure</span></div>
+          <div class="block-head"><div><h3>Fine-grained instance matching</h3><p>An overview figure presents the query, candidate observations, and selected target instance.</p></div></div>
           <article class="media-card">
             <div class="media-shell fine-grained-figure"><img class="lazy-image" data-src="./static/ex-fine-grained-2.png" alt="Fine-grained instance matching overview" loading="lazy" decoding="async"><div class="placeholder-overlay"><span class="placeholder-glyph">▦</span></div></div>
           </article>
@@ -386,7 +426,7 @@
         </div>
 
         <div class="experiment-block">
-          <div class="block-head"><div><h3>Long-sequence navigation</h3></div><span class="tag">3 featured videos</span></div>
+          <div class="block-head"><div><h3>Long-sequence navigation</h3></div></div>
           <div class="video-carousel" data-carousel>
             <div class="carousel-controls"><span class="carousel-status">1–2 / 3</span><button class="carousel-control" type="button" data-direction="-1" aria-label="Show previous long-sequence videos">←</button><button class="carousel-control" type="button" data-direction="1" aria-label="Show next long-sequence videos">→</button></div>
             <div class="carousel-track">
@@ -394,47 +434,49 @@
               <div class="media-shell ratio-wide">
               <video class="lazy-video" controls muted playsinline preload="none">
                 <source data-src="./static/0415longnav4x.mp4" type="video/mp4" >
-              </video>   </div>  <h4>keyboard-cola-bowl (moved)</h4>
+              </video><div class="placeholder-overlay"></div></div>
+              <h4>Targets: keyboard → cola bottle → white bowl</h4>
+              <p class="challenge-note"><strong>Challenge</strong> White bowl relocation</p>
             </article>
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0426longnav4x.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>white bottle-trashcan (moved)-banana</h4></article>
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0428lonnavnew4×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>toy-yellow stool-bottle (moved)</h4></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0426longnav4x.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Targets: white bottle → trash can → banana</h4><p class="challenge-note"><strong>Challenge</strong> Trash can relocation</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0428lonnavnew4×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Targets: toy → yellow stool → bottle</h4><p class="challenge-note"><strong>Challenge</strong> Bottle relocation</p></article>
             </div>
           </div>
         </div>
 
         <div class="experiment-block">
-          <div class="block-head"><div><h3>Mobile manipulation 1</h3><p>Standard navigation-to-interaction demonstrations with reachability-aware endpoint selection.</p></div><span class="tag">2 featured videos</span></div>
+          <div class="block-head"><div><h3>Standard mobile manipulation</h3><p>Navigation-to-interaction demonstrations with reachability-aware endpoint selection.</p></div></div>
           <div class="video-grid">
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/MM_cola_plate3×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>pick cola, place on red plate.</h4></article>
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/MM_bottle_plate_4×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>pick bottle, place on red plate.</h4></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/MM_cola_plate3×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Pick the cola and place it on the red plate.</h4></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/MM_bottle_plate_4×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Pick the bottle and place it on the red plate.</h4></article>
           </div>
         </div>
 
         <div class="experiment-block">
-          <div class="block-head"><div><h3>Mobile manipulation 2</h3><p>The target is moved after it has been observed. </p></div><span class="tag">3 videos</span></div>
+          <div class="block-head"><div><h3>Target relocation</h3><p>The target is moved after it has been observed.</p></div></div>
           <div class="video-carousel" data-carousel>
-            <div class="carousel-controls"><span class="carousel-status">1–2 / 4</span><button class="carousel-control" type="button" data-direction="-1" aria-label="Show previous relocation videos">←</button><button class="carousel-control" type="button" data-direction="1" aria-label="Show next relocation videos">→</button></div>
+            <div class="carousel-controls"><span class="carousel-status">1–2 / 3</span><button class="carousel-control" type="button" data-direction="-1" aria-label="Show previous relocation videos">←</button><button class="carousel-control" type="button" data-direction="1" aria-label="Show next relocation videos">→</button></div>
             <div class="carousel-track"> 
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0715apple-bowl-moved5×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>pick apple, place in white bowl (moved).</h4></article>
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0526apple-bowl-moved4×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>pick apple (disturbance: apple moved; other fruits.), place in white bowl (moved).</h4></article>
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0713MM_apple_bowl5×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>pick apple (moved), place in white bowl.</h4></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0715apple-bowl-moved5×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Pick the apple and place it in the white bowl.</h4><p class="challenge-note"><strong>Challenge</strong> White bowl relocation</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0526apple-bowl-moved4×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Pick the apple and place it in the white bowl.</h4><p class="challenge-note"><strong>Challenges</strong> Apple relocation · white bowl relocation · similar-fruit distractors</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/0713MM_apple_bowl5×.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Pick the apple and place it in the white bowl.</h4><p class="challenge-note"><strong>Challenge</strong> Apple relocation</p></article>
             </div>
           </div>
         </div>
 
         <div class="experiment-block">
-          <div class="block-head"><div><h3>Interference</h3><p>Stress tests with small target displacement.</p></div><span class="tag">1 videos</span></div>
+          <div class="block-head"><div><h3>Interference</h3><p>Stress tests with target displacement and distractors.</p></div></div>
           <div class="video-grid">
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/distort_single_MM.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Find the white bottle, and pick it.</h4></article>
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/disturb_no_nav.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>pick apple, place in bowl.</h4></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/distort_single_MM.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Find and pick the white bottle.</h4><p class="challenge-note"><strong>Challenge</strong> Small target displacement</p></article>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/disturb_no_nav.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Pick the apple and place it in the bowl.</h4><p class="challenge-note"><strong>Challenges</strong> Apple relocation · similar-fruit distractors</p></article>
           </div> 
         </div>
 
         <div class="experiment-block">
-          <div class="block-head"><div><h3>Failure case</h3></div><span class="tag">1 video</span></div>
+          <div class="block-head"><div><h3>Failure case</h3></div></div>
           <div class="video-grid single">
-            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/failure_case.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>pick cola, place on red plate.</h4>
-            <p class="card-caption">Don't recognize the red plate, and fail the subtask of "place on red plate".</p>
+            <article class="media-card"><div class="media-shell ratio-wide"><video class="lazy-video" controls muted playsinline preload="none" ><source data-src="./static/failure_case.mp4" type="video/mp4"></video><div class="placeholder-overlay"></div></div><h4>Pick the cola and place it on the red plate.</h4>
+            <p class="challenge-note"><strong>Failure cause</strong> Red plate not recognized</p>
             </article>
             </div>
         </div>
